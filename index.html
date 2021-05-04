@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container" id="parsi">
+        <form class="mb-4 mt-4">
+            <div class="form-group">
+                <input type="text" class="form-control" id="inputVal" placeholder="Enter Table No You Want To Print...">
+                <button class="btn btn-primary mt-4" type="button" onclick="getInputValue();">Submit</button>
+            </div>
+        </form>
+        <!-- <div class="card mt-3 shadow-md" id="cardID">
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="col-md">
+                        <p class="p-4" id="tableID"></p>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <table class="table table-bordered shadow-sm" id="listID"></table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+            <div class="row" id="tableID"></div>
+    </div>
+
+    <script>
+        var listData = [];
+        var resultData = [];
+        var finalresultData = [];
+        var dynamicElement = '';
+
+        $(document).ready(function () {
+			
+            getData('https://jsonplaceholder.typicode.com/posts')
+        .then((res)=>{
+            listData = res; 
+            let tab = `
+                <tr>
+                    <th>ID</th>
+                    <th>UsrID</th>
+                    <th>Title</th>    
+                </tr> `
+                for(let td of listData) {
+                    tab += `
+                        <tr>
+                            <td>${td.id}</td>    
+                            <td>${td.userId}</td>
+                            <td>${td.title}</td>
+                        </tr>
+                    `
+                }
+                document.getElementById("listID").innerHTML = tab;
+
+        })
+        .catch((err) => {
+            console.log('err====>',err);
+        })
+   
+           });
+
+        function getInputValue() {
+            // Selecting the input element and get its value 
+            var inputVal = document.getElementById("inputVal").value;
+            for(let i =1;i<=inputVal; i++) {
+                for(let j=1; j<=10; j++) {
+                    const table = j * i; 
+                    const data = {
+                        initialval: i,
+                        secondVal: j,
+                        result: table
+                    }
+                    resultData.push(data); 
+                }
+             }
+
+             for(let i=0; i<resultData.length-1; i++) {
+                finalresultData[i] = resultData.splice(0,10);
+             }
+
+             console.log(resultData);
+            console.log(finalresultData);             
+
+             for(let i=0; i<=finalresultData.length-1; i++) { 
+                 dynamicElement += `<div class="col-sm-4 col-md-4 col-lg-4"><div class="shadow mb-5 bg-primary"><ul class="list-group">`
+                    for(let j=0; j<finalresultData[i].length;j++) {
+                        var data = finalresultData[i][j]
+                        dynamicElement += '<li class="list-group-item">' + data.initialval + '*' + data.secondVal + '=' + data.result + '</li>';
+                    }
+                    dynamicElement += '</ul></div></div>'
+                    document.getElementById('tableID').innerHTML = dynamicElement;
+             }
+        }
+
+        async function getData(url) {
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        }
+
+        
+
+    </script>
+</body>
+
+</html>
